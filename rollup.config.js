@@ -13,6 +13,7 @@ export default {
   ],
   output: {
     file: 'build/index.js',
-    format: 'esm'
+    format: 'esm',
+    sourcemap: true
   }
 }
