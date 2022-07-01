@@ -1,0 +1,35 @@
+name: Release build
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  release:
+    name: Commit built packages to releases branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js for use with actions
+        uses: actions/setup-node@v1
+        with:
+          node-version:  16.x
+      - name: Checkout dev
+        uses: actions/checkout@v3
+      - name: Checkout releases
+        uses: actions/checkout@v3
+        with:
+          ref: releases
+          path: build
+      - name: Release
+        run: |
+          set -ex
+          BUILD_HASH=$(git rev-parse HEAD)
+          BUILD_DIR="build"
+          BUILD_BRANCH="releases"
+          npm install
+          npm run build
+          cd "$BUILD_DIR"
+          git config user.name 'ReleaseBot'
+          git config user.email '<>'
+          git add .
+          git commit -m "Build $BUILD_HASH"
+          git push origin "$BUILD_BRANCH"
